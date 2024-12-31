@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   email String @unique
   name String?
   password String
@@ -23,15 +23,15 @@ model User {
 }
 
 model ApiKey {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   key String @unique
   owner User @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  ownerId String
 }
 
 model GeneratedKeys {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   key String @unique
   owner User @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  ownerId String
 }
