@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './core/features/configuration/configuration.type';
 import CoreFeatures from './core/features/core.features';
@@ -22,7 +20,5 @@ import { EncryptionModule } from './core/encryption/encryption.module';
     EncryptionModule,
     ...CoreFeatures,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

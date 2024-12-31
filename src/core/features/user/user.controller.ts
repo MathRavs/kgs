@@ -7,7 +7,7 @@ import { UserMapper } from './mappers/user.mapper';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create')
+  @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto) {
     return UserMapper.toUserResponse(
       await this.userService.createUser(createUserDto),
