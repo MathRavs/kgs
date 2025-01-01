@@ -7,6 +7,6 @@ export const UserMapper = {
     userResponseDto.name = user.name;
     userResponseDto.email = user.email;
     userResponseDto.id = user.id;
-    return user;
+    return userResponseDto;
   },
 };
