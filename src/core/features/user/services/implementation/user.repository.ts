@@ -4,8 +4,10 @@ import { User } from '@prisma/client';
 import { AbstractUserRepository } from '../interfaces/abstract-user.repository';
 
 @Injectable()
-export class UserRepository implements AbstractUserRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+export class UserRepository extends AbstractUserRepository {
+  constructor(private readonly prismaService: PrismaService) {
+    super();
+  }
 
   createUser(name: string, email: string, password: string): Promise<User> {
     return this.prismaService.user.create({

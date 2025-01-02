@@ -1,7 +1,11 @@
 import { User } from '@prisma/client';
 
-export interface AbstractUserRepository {
-  createUser(name: string, email: string, password: string): Promise<User>;
-  findUserByEmail(email: string): Promise<User>;
-  findUserById(id: string): Promise<User>;
+export abstract class AbstractUserRepository {
+  abstract createUser(
+    name: string,
+    email: string,
+    password: string,
+  ): Promise<User>;
+  abstract findUserByEmail(email: string): Promise<User>;
+  abstract findUserById(id: string): Promise<User>;
 }

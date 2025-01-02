@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationType } from '../features/configuration/configuration.type';
+import { ConfigurationType } from '../configuration/configuration.type';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -14,6 +14,6 @@ export class BcryptService {
   }
 
   verifyPassword(password: string, hash: string) {
-    return bcrypt.compare(password, hash);
+    return bcrypt.compareSync(password, hash);
   }
 }
