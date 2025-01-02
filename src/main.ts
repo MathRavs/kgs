@@ -12,6 +12,10 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Key generator service')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .setDescription(
       ` 
       This service provides APIs to generate and manage unique keys for various use cases. 
