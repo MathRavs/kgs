@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { UserService } from './services/implementation/user.service';
-import { UserRepository } from './services/implementation/user.repository';
+import { UserRepository } from './repositories/implementation/user.repository';
 import { UserController } from './user.controller';
-import { AbstractUserService } from './services/interfaces/abstract-user.service';
-import { AbstractUserRepository } from './services/interfaces/abstract-user.repository';
+import { AbstractUserService } from './services/abstract/abstract-user.service';
+import { AbstractUserRepository } from './repositories/abstract/abstract-user.repository';
 
 @Global()
 @Module({

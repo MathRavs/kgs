@@ -1,7 +1,7 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -22,6 +22,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         error: 'Conflict',
       });
     } else {
+      console.log(exception);
       // Handle other Prisma errors if necessary
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

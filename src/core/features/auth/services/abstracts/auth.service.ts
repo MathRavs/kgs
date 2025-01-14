@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AbstractUserRepository } from '../../../user/services/interfaces/abstract-user.repository';
+import { AbstractUserRepository } from '../../../user/repositories/abstract/abstract-user.repository';
 import { BcryptService } from '../../../../encryption/bcrypt.service';
 import { AbstractAuthService } from '../interfaces/abstract-auth.service';
 

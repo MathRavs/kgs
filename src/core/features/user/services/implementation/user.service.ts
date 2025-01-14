@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractUserService } from '../interfaces/abstract-user.service';
+import { AbstractUserService } from '../abstract/abstract-user.service';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import { User } from '@prisma/client';
 import { BcryptService } from '../../../../encryption/bcrypt.service';
-import { AbstractUserRepository } from '../interfaces/abstract-user.repository';
+import { AbstractUserRepository } from '../../repositories/abstract/abstract-user.repository';
 
 @Injectable()
 export class UserService extends AbstractUserService {

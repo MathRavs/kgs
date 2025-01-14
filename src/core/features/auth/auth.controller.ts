@@ -6,8 +6,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { AuthService } from './services/implementation/auth.service';
-import { AbstractUserService } from '../user/services/interfaces/abstract-user.service';
+import { AuthService } from './services/abstracts/auth.service';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -16,10 +15,7 @@ import { UserMapper } from '../user/mappers/user.mapper';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: AbstractUserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
