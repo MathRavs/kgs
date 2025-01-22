@@ -4,6 +4,7 @@ import { AbstractApiKeyRepository } from './repositories/abstract/abstract-api-k
 import { ApiKeyRepository } from './repositories/implementation/api-key.repository';
 import { ApiKeyService } from './services/implementation/api-key.service';
 import { AbstractApiKeyService } from './services/abstract/abstract-api-key.service';
+import { ApiKeyGuard } from './guards/api-key.guard';
 
 @Global()
 @Module({
@@ -17,7 +18,8 @@ import { AbstractApiKeyService } from './services/abstract/abstract-api-key.serv
       provide: AbstractApiKeyService,
       useClass: ApiKeyService,
     },
+    ApiKeyGuard,
   ],
-  exports: [AbstractApiKeyRepository, AbstractApiKeyService],
+  exports: [AbstractApiKeyRepository, AbstractApiKeyService, ApiKeyGuard],
 })
 export class ApiKeyModule {}

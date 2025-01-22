@@ -3,6 +3,7 @@ import { AbstractApiKeyService } from '../abstract/abstract-api-key.service';
 import { ApiKey } from '@prisma/client';
 import { AbstractApiKeyRepository } from '../../repositories/abstract/abstract-api-key.repository';
 import { generateRandomCharacters } from '../../../../utils/random-text-generator.util';
+import { ApiKeyWithOwner } from '../../types/api-key.type';
 
 @Injectable()
 export class ApiKeyService extends AbstractApiKeyService {
@@ -10,7 +11,7 @@ export class ApiKeyService extends AbstractApiKeyService {
     super();
   }
 
-  findApiKey(key: string): Promise<ApiKey> {
+  findApiKey(key: string): Promise<ApiKeyWithOwner> {
     return this.apiKeyRepository.findByKey(key);
   }
 

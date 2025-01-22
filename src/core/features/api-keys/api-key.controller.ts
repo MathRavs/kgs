@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { ApiKeyMapper } from './mappers/api-key.mapper';
 import { AbstractApiKeyService } from './services/abstract/abstract-api-key.service';
 
+@ApiTags('api-keys')
 @Controller('api-key')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('access-token')

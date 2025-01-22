@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AbstractApiKeyRepository } from '../abstract/abstract-api-key.repository';
 import { ApiKey } from '@prisma/client';
 import { PrismaService } from '../../../../database/prisma.service';
+import { ApiKeyWithOwner } from '../../types/api-key.type';
 
 @Injectable()
 export class ApiKeyRepository extends AbstractApiKeyRepository {
@@ -9,10 +10,13 @@ export class ApiKeyRepository extends AbstractApiKeyRepository {
     super();
   }
 
-  findByKey(key: string): Promise<ApiKey> {
+  findByKey(key: string): Promise<ApiKeyWithOwner> {
     return this.prismaService.apiKey.findUniqueOrThrow({
       where: {
         key,
+      },
+      include: {
+        owner: true,
       },
     });
   }

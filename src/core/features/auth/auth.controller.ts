@@ -3,16 +3,17 @@ import {
   Controller,
   Get,
   Post,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './services/abstracts/auth.service';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { UserMapper } from '../user/mappers/user.mapper';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

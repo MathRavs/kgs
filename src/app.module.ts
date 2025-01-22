@@ -5,6 +5,9 @@ import CoreFeatures from './core/features/core.features';
 import { DatabaseModule } from './core/database/database.module';
 import { ConfigurationDataLoader } from './core/configuration/configuration';
 import { EncryptionModule } from './core/encryption/encryption.module';
+import { UrlShortenerModule } from './features/url-shortener/url-shortener.module';
+
+const features = [UrlShortenerModule];
 
 @Module({
   imports: [
@@ -19,6 +22,7 @@ import { EncryptionModule } from './core/encryption/encryption.module';
     DatabaseModule,
     EncryptionModule,
     ...CoreFeatures,
+    ...features,
   ],
 })
 export class AppModule {}
