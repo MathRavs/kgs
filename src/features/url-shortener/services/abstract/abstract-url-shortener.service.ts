@@ -1,4 +1,6 @@
 import { ShortenedUrls } from '@prisma/client';
+import { PaginationDto } from '../../../../core/pagination/dto/pagination.dto';
+import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
 
 export abstract class AbstractUrlShortenerService {
   abstract createShortenedUrl(
@@ -7,7 +9,10 @@ export abstract class AbstractUrlShortenerService {
     ownerId: string,
   ): Promise<ShortenedUrls>;
 
-  abstract getShortenedUrls(ownerId: string): Promise<ShortenedUrls[]>;
+  abstract getShortenedUrls(
+    ownerId: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResult<ShortenedUrls>>;
 
   abstract getShortenedUrlByKey(key: string): Promise<ShortenedUrls>;
 }

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   Res,
   UseGuards,
@@ -14,6 +15,9 @@ import { ApiKeyGuard } from '../../core/features/api-keys/guards/api-key.guard';
 import { User } from '@prisma/client';
 import { CreateShortenedUrlDto } from './dto/create-shortened-url.dto';
 import { Response } from 'express';
+import { PaginationDto } from '../../core/pagination/dto/pagination.dto';
+import { mapPaginationResultToPaginationDto } from '../../core/pagination/mappers/pagination-dto.mapper';
+import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
@@ -36,7 +40,30 @@ export class UrlShortenerController {
     );
   }
 
+  @Get('my-shortened-urls')
   @ApiSecurity('api-key')
+  @UseGuards(ApiKeyGuard)
+  async getMyShortenedUrl(
+    @Request()
+    {
+      user,
+    }: {
+      user: User;
+    },
+    @Query() paginationDto: PaginationDto,
+  ) {
+    const results = await this.urlShortenerService.getShortenedUrls(
+      user.id,
+      paginationDto,
+    );
+    return mapPaginationResultToPaginationDto(
+      paginationDto.limit,
+      paginationDto.page,
+      results,
+      (value) => ShortenedUrlMapper.toResponse(value),
+    );
+  }
+
   @Get(':key')
   async getCorrespondingUrl(@Param('key') key: string, @Res() res: Response) {
     const shortenedUrl =

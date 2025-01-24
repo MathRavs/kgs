@@ -1,4 +1,5 @@
 import { ShortenedUrls } from '@prisma/client';
+import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
 
 export abstract class AbstractUrlShortenerRepository {
   abstract create(
@@ -8,7 +9,11 @@ export abstract class AbstractUrlShortenerRepository {
     name: string,
   ): Promise<ShortenedUrls>;
 
-  abstract list(ownerId: string): Promise<ShortenedUrls[]>;
+  abstract list(
+    ownerId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<ShortenedUrls>>;
 
   abstract findAll(): Promise<ShortenedUrls[]>;
 

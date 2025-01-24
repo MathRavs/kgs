@@ -6,6 +6,8 @@ import { AbstractUrlShortenerRepository } from '../../repositories/abstract/abst
 import { AbstractSequenceManagerRepository } from '../../../../core/database/repositories/abstract/abstract-sequence-manager.repository';
 import { SequencesEnum } from '../../../../core/database/enums/sequences.enum';
 import { Base62 } from '../../../../core/utils/base-62.util';
+import { PaginationDto } from '../../../../core/pagination/dto/pagination.dto';
+import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
@@ -42,8 +44,15 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     );
   }
 
-  async getShortenedUrls(ownerId: string): Promise<ShortenedUrls[]> {
-    return this.urlShortenerRepository.list(ownerId);
+  async getShortenedUrls(
+    ownerId: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResult<ShortenedUrls>> {
+    return this.urlShortenerRepository.list(
+      ownerId,
+      pagination.page,
+      pagination.limit,
+    );
   }
 
   /**

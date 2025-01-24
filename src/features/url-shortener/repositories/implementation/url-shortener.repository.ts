@@ -1,7 +1,11 @@
 import { AbstractUrlShortenerRepository } from '../abstract/abstract-url-shortener.repository';
 import { Injectable } from '@nestjs/common';
-import { ShortenedUrls } from '@prisma/client';
+import { Prisma, ShortenedUrls } from '@prisma/client';
 import { PrismaService } from '../../../../core/database/prisma.service';
+import {
+  paginate,
+  PaginatedResult,
+} from '../../../../core/pagination/utils/prisma-pagination.util';
 
 @Injectable()
 export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
@@ -41,8 +45,16 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
     });
   }
 
-  list(ownerId: string): Promise<ShortenedUrls[]> {
-    return this.prismaService.shortenedUrls.findMany({
+  list(
+    ownerId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<ShortenedUrls>> {
+    return paginate<
+      ShortenedUrls,
+      Prisma.ShortenedUrlsWhereInput,
+      Prisma.ShortenedUrlsOrderByWithAggregationInput
+    >('ShortenedUrls', { page, limit }, this.prismaService, {
       where: {
         ownerId,
       },
