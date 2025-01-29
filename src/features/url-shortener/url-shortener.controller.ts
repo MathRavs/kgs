@@ -5,19 +5,20 @@ import {
   Param,
   Post,
   Query,
+  Redirect,
   Request,
-  Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AbstractUrlShortenerService } from './services/abstract/abstract-url-shortener.service';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ApiKeyGuard } from '../../core/features/api-keys/guards/api-key.guard';
 import { User } from '@prisma/client';
 import { CreateShortenedUrlDto } from './dto/create-shortened-url.dto';
-import { Response } from 'express';
 import { PaginationDto } from '../../core/pagination/dto/pagination.dto';
 import { mapPaginationResultToPaginationDto } from '../../core/pagination/mappers/pagination-dto.mapper';
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
@@ -65,9 +66,13 @@ export class UrlShortenerController {
   }
 
   @Get(':key')
-  async getCorrespondingUrl(@Param('key') key: string, @Res() res: Response) {
+  @CacheTTL(20_000)
+  @UseInterceptors(CacheInterceptor)
+  @Redirect()
+  async getCorrespondingUrl(@Param('key') key: string) {
     const shortenedUrl =
       await this.urlShortenerService.getShortenedUrlByKey(key);
-    res.redirect(shortenedUrl.url);
+
+    return { url: shortenedUrl.url };
   }
 }

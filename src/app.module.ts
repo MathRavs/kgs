@@ -6,6 +6,7 @@ import { DatabaseModule } from './core/database/database.module';
 import { ConfigurationDataLoader } from './core/configuration/configuration';
 import { EncryptionModule } from './core/encryption/encryption.module';
 import { UrlShortenerModule } from './features/url-shortener/url-shortener.module';
+import { CacheModule } from './core/cache/cache.module';
 
 const features = [UrlShortenerModule];
 
@@ -19,6 +20,7 @@ const features = [UrlShortenerModule];
         abortEarly: true,
       },
     }),
+    CacheModule,
     DatabaseModule,
     EncryptionModule,
     ...CoreFeatures,
