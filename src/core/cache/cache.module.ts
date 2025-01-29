@@ -4,16 +4,19 @@ import { CacheModule as CacheManagerModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheOptions } from '@nestjs/cache-manager/dist/interfaces/cache-module.interface';
 
-export const CacheModule = CacheManagerModule.register({
+export const CacheModule = CacheManagerModule.registerAsync({
   inject: [ConfigService],
   isGlobal: true,
-  useFactory: (
+  useFactory: async (
     configService: ConfigService<ConfigurationType>,
-  ): CacheOptions => ({
+  ): Promise<CacheOptions> => ({
     isGlobal: true,
-    store: redisStore,
-    host: configService.get('REDIS_HOST'),
-    port: configService.get('REDIS_PORT'),
-    password: configService.get('REDIS_PASSWORD'),
+    store: await redisStore.redisStore({
+      socket: {
+        host: configService.get('REDIS_HOST'),
+        port: configService.get('REDIS_PORT'),
+      },
+      password: configService.get('REDIS_PASSWORD'),
+    }),
   }),
 });

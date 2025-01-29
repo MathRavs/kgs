@@ -21,8 +21,13 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         message: `Unique constraint violation on ${target}`,
         error: 'Conflict',
       });
+    } else if (exception.code === 'P2025') {
+      response.status(HttpStatus.NOT_FOUND).json({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Entity not found`,
+        error: 'Not found',
+      });
     } else {
-      console.log(exception);
       // Handle other Prisma errors if necessary
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
