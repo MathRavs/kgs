@@ -8,12 +8,14 @@ import { SequencesEnum } from '../../../../core/database/enums/sequences.enum';
 import { Base62 } from '../../../../core/utils/base-62.util';
 import { PaginationDto } from '../../../../core/pagination/dto/pagination.dto';
 import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
+import { AbstractUrlMetadataService } from '../../../url-metadata/services/abstract/abstract-url-metadata.service';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
   constructor(
     private readonly urlShortenerRepository: AbstractUrlShortenerRepository,
     private readonly abstractSequenceRepository: AbstractSequenceManagerRepository,
+    private readonly metadataService: AbstractUrlMetadataService,
   ) {
     super();
   }
@@ -36,12 +38,16 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
       urlKey = `${prefix}${urlKey}`;
     }
 
-    return this.urlShortenerRepository.create(
+    const data = await this.urlShortenerRepository.create(
       ownerId,
       await this.createEncodedUrl(urlKey),
       url,
       name,
     );
+
+    // console.log(await this.metadataService.getMetadata(url));
+
+    return data;
   }
 
   async getShortenedUrls(

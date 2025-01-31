@@ -4,6 +4,7 @@ import { UrlShortenerRepository } from './repositories/implementation/url-shorte
 import { AbstractUrlShortenerService } from './services/abstract/abstract-url-shortener.service';
 import { UrlShortenerService } from './services/implementation/url-shortener.service';
 import { UrlShortenerController } from './url-shortener.controller';
+import { UrlMetadataModule } from '../url-metadata/url-metadata.module';
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { UrlShortenerController } from './url-shortener.controller';
       useClass: UrlShortenerService,
     },
   ],
+  imports: [UrlMetadataModule],
   exports: [AbstractUrlShortenerService],
   controllers: [UrlShortenerController],
 })
