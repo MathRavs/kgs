@@ -27,6 +27,8 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     url: string,
     ownerId: string,
   ): Promise<ShortenedUrls> {
+    const metadata = await this.metadataService.getMetadata(url);
+
     let urlKey = this.getMd5Suffix(MD5(url).toString());
 
     const existingUrl = await this.urlShortenerRepository.findByKey(
@@ -38,16 +40,13 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
       urlKey = `${prefix}${urlKey}`;
     }
 
-    const data = await this.urlShortenerRepository.create(
+    return this.urlShortenerRepository.create(
       ownerId,
       await this.createEncodedUrl(urlKey),
       url,
       name,
+      metadata,
     );
-
-    // console.log(await this.metadataService.getMetadata(url));
-
-    return data;
   }
 
   async getShortenedUrls(

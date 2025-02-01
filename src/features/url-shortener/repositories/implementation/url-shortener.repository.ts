@@ -6,6 +6,7 @@ import {
   paginate,
   PaginatedResult,
 } from '../../../../core/pagination/utils/prisma-pagination.util';
+import { UrlMetadataType } from '../../../url-metadata/types/url-metadata.type';
 
 @Injectable()
 export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
@@ -18,6 +19,7 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
     key: string,
     url: string,
     name: string,
+    metadata: UrlMetadataType,
   ): Promise<ShortenedUrls> {
     return this.prismaService.shortenedUrls.create({
       data: {
@@ -25,6 +27,11 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
         ownerId,
         name,
         url,
+        metadata_title: metadata.title,
+        metadata_description: metadata.description,
+        metadata_sitename: metadata.siteName,
+        metadata_favicon: metadata.favicon,
+        metadata_image: metadata.image,
       },
     });
   }

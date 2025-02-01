@@ -1,5 +1,6 @@
 import { ShortenedUrls } from '@prisma/client';
 import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
+import { UrlMetadataType } from '../../../url-metadata/types/url-metadata.type';
 
 export abstract class AbstractUrlShortenerRepository {
   abstract create(
@@ -7,6 +8,7 @@ export abstract class AbstractUrlShortenerRepository {
     key: string,
     url: string,
     name: string,
+    metadata: UrlMetadataType,
   ): Promise<ShortenedUrls>;
 
   abstract list(
