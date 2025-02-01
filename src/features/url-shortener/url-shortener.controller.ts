@@ -23,6 +23,7 @@ import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pag
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/shortened-url-response.dto';
+import { OpenApiPaginationResponse } from '@core/pagination/decorators/api-ok-response-paginated.decorator';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
@@ -50,6 +51,7 @@ export class UrlShortenerController {
   @Get('my-shortened-urls')
   @ApiSecurity('api-key')
   @UseGuards(ApiKeyGuard)
+  @OpenApiPaginationResponse(ShortenedUrlResponseDto)
   async getMyShortenedUrl(
     @Request()
     {
