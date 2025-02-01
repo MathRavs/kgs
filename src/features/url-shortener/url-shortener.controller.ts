@@ -15,10 +15,14 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ApiKeyGuard } from '@core/features/api-keys/guards/api-key.guard';
 import { User } from '@prisma/client';
 import { CreateShortenedUrlDto } from './dto/create-shortened-url.dto';
-import { PaginationDto } from '@core/pagination/dto/pagination.dto';
+import {
+  PaginationDto,
+  PaginationResponseDto,
+} from '@core/pagination/dto/pagination.dto';
 import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pagination-dto.mapper';
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/shortened-url-response.dto';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
@@ -30,14 +34,16 @@ export class UrlShortenerController {
   @ApiSecurity('api-key')
   @Post('shorten')
   @UseGuards(ApiKeyGuard)
-  createShortenedUrl(
+  async createShortenedUrl(
     @Request() { user }: { user: User },
     @Body() data: CreateShortenedUrlDto,
   ) {
-    return this.urlShortenerService.createShortenedUrl(
-      data.name,
-      data.url,
-      user.id,
+    return ShortenedUrlMapper.toResponse(
+      await this.urlShortenerService.createShortenedUrl(
+        data.name,
+        data.url,
+        user.id,
+      ),
     );
   }
 
@@ -52,7 +58,7 @@ export class UrlShortenerController {
       user: User;
     },
     @Query() paginationDto: PaginationDto,
-  ) {
+  ): Promise<PaginationResponseDto<ShortenedUrlResponseDto>> {
     const results = await this.urlShortenerService.getShortenedUrls(
       user.id,
       paginationDto,
