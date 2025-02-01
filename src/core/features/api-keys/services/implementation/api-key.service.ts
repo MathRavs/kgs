@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AbstractApiKeyService } from '../abstract/abstract-api-key.service';
 import { ApiKey } from '@prisma/client';
 import { AbstractApiKeyRepository } from '../../repositories/abstract/abstract-api-key.repository';
-import { generateRandomCharacters } from '../../../../utils/random-text-generator.util';
+import { generateRandomCharacters } from '@core/utils/random-text-generator.util';
 import { ApiKeyWithOwner } from '../../types/api-key.type';
 
 @Injectable()

@@ -1,11 +1,11 @@
 import { AbstractUrlShortenerRepository } from '../abstract/abstract-url-shortener.repository';
 import { Injectable } from '@nestjs/common';
 import { Prisma, ShortenedUrls } from '@prisma/client';
-import { PrismaService } from '../../../../core/database/prisma.service';
+import { PrismaService } from '@core/database/prisma.service';
 import {
   paginate,
   PaginatedResult,
-} from '../../../../core/pagination/utils/prisma-pagination.util';
+} from '@core/pagination/utils/prisma-pagination.util';
 import { UrlMetadataType } from '../../../url-metadata/types/url-metadata.type';
 
 @Injectable()

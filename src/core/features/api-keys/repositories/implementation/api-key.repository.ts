@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AbstractApiKeyRepository } from '../abstract/abstract-api-key.repository';
 import { ApiKey } from '@prisma/client';
-import { PrismaService } from '../../../../database/prisma.service';
+import { PrismaService } from '@core/database/prisma.service';
 import { ApiKeyWithOwner } from '../../types/api-key.type';
 
 @Injectable()

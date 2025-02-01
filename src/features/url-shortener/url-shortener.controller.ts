@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { AbstractUrlShortenerService } from './services/abstract/abstract-url-shortener.service';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { ApiKeyGuard } from '../../core/features/api-keys/guards/api-key.guard';
+import { ApiKeyGuard } from '@core/features/api-keys/guards/api-key.guard';
 import { User } from '@prisma/client';
 import { CreateShortenedUrlDto } from './dto/create-shortened-url.dto';
-import { PaginationDto } from '../../core/pagination/dto/pagination.dto';
-import { mapPaginationResultToPaginationDto } from '../../core/pagination/mappers/pagination-dto.mapper';
+import { PaginationDto } from '@core/pagination/dto/pagination.dto';
+import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pagination-dto.mapper';
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 

@@ -3,12 +3,12 @@ import { AbstractUrlShortenerService } from '../abstract/abstract-url-shortener.
 import { ShortenedUrls } from '@prisma/client';
 import * as MD5 from 'crypto-js/md5';
 import { AbstractUrlShortenerRepository } from '../../repositories/abstract/abstract-url-shortener.repository';
-import { AbstractSequenceManagerRepository } from '../../../../core/database/repositories/abstract/abstract-sequence-manager.repository';
-import { SequencesEnum } from '../../../../core/database/enums/sequences.enum';
-import { Base62 } from '../../../../core/utils/base-62.util';
-import { PaginationDto } from '../../../../core/pagination/dto/pagination.dto';
-import { PaginatedResult } from '../../../../core/pagination/utils/prisma-pagination.util';
-import { AbstractUrlMetadataService } from '../../../url-metadata/services/abstract/abstract-url-metadata.service';
+import { AbstractSequenceManagerRepository } from '@core/database/repositories/abstract/abstract-sequence-manager.repository';
+import { SequencesEnum } from '@core/database/enums/sequences.enum';
+import { Base62 } from '@core/utils/base-62.util';
+import { PaginationDto } from '@core/pagination/dto/pagination.dto';
+import { PaginatedResult } from '@core/pagination/utils/prisma-pagination.util';
+import { AbstractUrlMetadataService } from '@feature/url-metadata/services/abstract/abstract-url-metadata.service';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
