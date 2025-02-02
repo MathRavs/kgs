@@ -8,18 +8,18 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './services/abstracts/auth.service';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { UserMapper } from '../user/mappers/user.mapper';
+import { AbstractAuthService } from '@core/features/auth/services/abstracts/abstract-auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   @Inject()
-  private readonly authService: AuthService;
+  private readonly authService: AbstractAuthService;
 
   @Inject()
   private readonly logger: Logger;

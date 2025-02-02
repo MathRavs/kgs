@@ -1,3 +1,3 @@
-export interface AbstractAuthService {
-  login(email: string, password: string): Promise<string>;
+export abstract class AbstractAuthService {
+  abstract login(email: string, password: string): Promise<string>;
 }

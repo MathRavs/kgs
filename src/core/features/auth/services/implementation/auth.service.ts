@@ -5,7 +5,7 @@ import { BcryptService } from '@core/encryption/bcrypt.service';
 import { AbstractAuthService } from '../abstracts/abstract-auth.service';
 
 @Injectable()
-export class AuthService implements AbstractAuthService {
+export class AuthService extends AbstractAuthService {
   @Inject()
   private readonly jwtService: JwtService;
 

@@ -3,7 +3,7 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 
 export const winstonLogger = createLogger({
-  level: 'info',
+  level: 'debug',
   format: format.combine(format.timestamp(), format.json()),
   transports: [
     process.env.NODE_ENV === 'production'
@@ -18,7 +18,8 @@ export const winstonLogger = createLogger({
     new transports.Console({
       format: format.combine(
         format.colorize(), // Ajoute des couleurs pour la console
-        format.simple(), // Format simple pour la console
+        format.timestamp(),
+        format.ms(),
         nestWinstonModuleUtilities.format.nestLike('MyApp', {
           colors: true,
           prettyPrint: true,

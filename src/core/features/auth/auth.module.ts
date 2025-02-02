@@ -1,11 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { AuthService } from './services/abstracts/auth.service';
 import { JwtStrategy } from './strategies/jwt-strategy.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ConfigurationType } from '../../configuration/configuration.type';
 import { AuthController } from './auth.controller';
+import { AbstractAuthService } from '@core/features/auth/services/abstracts/abstract-auth.service';
+import { AuthService } from '@core/features/auth/services/implementation/auth.service';
 
 @Global()
 @Module({
@@ -21,8 +22,14 @@ import { AuthController } from './auth.controller';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  providers: [
+    {
+      provide: AbstractAuthService,
+      useClass: AuthService,
+    },
+    JwtStrategy,
+  ],
+  exports: [AbstractAuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}
