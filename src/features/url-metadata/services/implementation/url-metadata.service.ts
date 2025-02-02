@@ -47,12 +47,15 @@ export class UrlMetadataService extends AbstractUrlMetadataService {
           this.getMetaContent($, ['og:site_name']) ||
           this.getDomainName(targetUrl),
       };
-    } catch (error) {
-      console.error(error);
-      throw new HttpException(
-        'Failed to fetch metadata',
-        HttpStatus.BAD_GATEWAY,
-      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(error.message, error.stack, this.constructor.name);
+
+        throw new HttpException(
+          'Failed to fetch metadata',
+          HttpStatus.BAD_GATEWAY,
+        );
+      }
     }
   }
 
