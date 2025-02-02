@@ -1,5 +1,6 @@
 import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 
 export const winstonLogger = createLogger({
   level: 'info',
@@ -18,6 +19,12 @@ export const winstonLogger = createLogger({
       format: format.combine(
         format.colorize(), // Ajoute des couleurs pour la console
         format.simple(), // Format simple pour la console
+        nestWinstonModuleUtilities.format.nestLike('MyApp', {
+          colors: true,
+          prettyPrint: true,
+          processId: true,
+          appName: true,
+        }),
       ),
     }),
   ].filter(Boolean),
