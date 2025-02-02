@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
+  Logger,
   Post,
   Request,
   UseGuards,
@@ -16,10 +18,15 @@ import { UserMapper } from '../user/mappers/user.mapper';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  @Inject()
+  private readonly authService: AuthService;
+
+  @Inject()
+  private readonly logger: Logger;
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
+    this.logger.log('Login attempt');
     const responseDto = new LoginResponseDto();
     responseDto.token = await this.authService.login(
       loginDto.email,

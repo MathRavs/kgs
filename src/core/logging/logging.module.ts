@@ -1,16 +1,11 @@
-import { Global, Module } from '@nestjs/common';
-
+import { Global, Logger as NestLogger, Module } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
-import { winstonLogger } from '@core/logging/constants/winston-logging.constant';
+import { LogginProviders } from '@core/logging/providers/loggin.provider';
 
 @Global()
 @Module({
-  imports: [
-    WinstonModule.forRoot({
-      instance: winstonLogger,
-    }),
-  ],
-  providers: [],
-  exports: [],
+  imports: [WinstonModule],
+  providers: LogginProviders,
+  exports: [NestLogger],
 })
 export class LoggingModule {}
