@@ -33,11 +33,11 @@ export class CustomWinstonLoggerService extends WinstonLogger {
     super.warn(this.getMessageContent(message), context);
   }
 
-  override debug?(message: any, context?: string) {
+  override debug(message: any, context?: string) {
     super.debug(this.getMessageContent(message), context);
   }
 
-  override verbose?(message: any, context?: string) {
+  override verbose(message: any, context?: string) {
     super.verbose(this.getMessageContent(message), context);
   }
 

@@ -26,7 +26,6 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    this.logger.log('Login attempt');
     const responseDto = new LoginResponseDto();
     responseDto.token = await this.authService.login(
       loginDto.email,
