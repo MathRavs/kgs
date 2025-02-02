@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { AbstractUrlMetadataService } from '../abstract/abstract-url-metadata.service';
 import * as cheerio from 'cheerio';
 import { UrlMetadataType } from '../../types/url-metadata.type';
@@ -8,18 +14,27 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class UrlMetadataService extends AbstractUrlMetadataService {
-  constructor(private readonly httpService: HttpService) {
-    super();
-  }
+  @Inject()
+  private readonly httpService: HttpService;
+
+  @Inject()
+  private readonly logger: Logger;
 
   async getMetadata(targetUrl: string): Promise<UrlMetadataType> {
     try {
+      this.logger.debug(`Fetching metadata`, this.constructor.name);
+
       const { data } = await firstValueFrom(
         this.httpService.get(targetUrl, {
           headers: { 'User-Agent': 'Mozilla/5.0' },
         }),
       );
+
+      this.logger.debug(`HTML page retrieved`, this.constructor.name);
+
       const $ = cheerio.load(data);
+
+      this.logger.debug(`data loaded in scraper`, this.constructor.name);
 
       return {
         title: $('title').first().text() || undefined,
@@ -46,8 +61,13 @@ export class UrlMetadataService extends AbstractUrlMetadataService {
       const content = $(`meta[property='${name}'], meta[name='${name}']`).attr(
         'content',
       );
-      if (content) return content;
+      if (content) {
+        this.logger.debug(`meta content found`, this.constructor.name);
+        return content;
+      }
     }
+
+    this.logger.debug(`meta contend not found`, this.constructor.name);
     return undefined;
   }
 
@@ -57,7 +77,14 @@ export class UrlMetadataService extends AbstractUrlMetadataService {
       $('link[rel="shortcut icon"]').attr('href') ||
       '/favicon.ico';
 
-    return url.resolve(targetUrl, faviconPath);
+    try {
+      const result = url.resolve(targetUrl, faviconPath);
+      this.logger.debug(`favicon found`, this.constructor.name);
+
+      return result;
+    } catch {
+      this.logger.debug(`favicon not found`, this.constructor.name);
+    }
   }
 
   private getFirstImage($: cheerio.Root): string | undefined {
