@@ -1,31 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AbstractUserService } from '../abstract/abstract-user.service';
 import { CreateUserDto } from '../../dto/create-user.dto';
 import { User } from '@prisma/client';
-import { BcryptService } from '../../../../encryption/bcrypt.service';
+import { BcryptService } from '@core/encryption/bcrypt.service';
 import { AbstractUserRepository } from '../../repositories/abstract/abstract-user.repository';
 
 @Injectable()
 export class UserService extends AbstractUserService {
-  constructor(
-    private readonly userRepository: AbstractUserRepository,
-    private readonly bcryptService: BcryptService,
-  ) {
-    super();
-  }
+  @Inject()
+  private readonly userRepository: AbstractUserRepository;
 
-  createUser(createUserDto: CreateUserDto): Promise<User> {
+  @Inject()
+  private readonly bcryptService: BcryptService;
+
+  @Inject()
+  private readonly logger: Logger;
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    this.logger.log('Creating user', this.constructor.name);
+
     const encryptedPassword = this.bcryptService.hashPassword(
       createUserDto.password,
     );
-    return this.userRepository.createUser(
+
+    const result = await this.userRepository.createUser(
       createUserDto.name,
       createUserDto.email,
       encryptedPassword,
     );
+
+    this.logger.log('User created', this.constructor.name);
+
+    return result;
   }
 
-  findUserById(id: string): Promise<User> {
-    return this.userRepository.findUserById(id);
+  async findUserById(id: string): Promise<User> {
+    this.logger.log(`Retrieving user ${id}`, this.constructor.name);
+    const result = await this.userRepository.findUserById(id);
+
+    this.logger.log(`User retrieved`, this.constructor.name);
+    return result;
   }
 }

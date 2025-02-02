@@ -1,13 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '@core/database/prisma.service';
 import { User } from '@prisma/client';
 import { AbstractUserRepository } from '../abstract/abstract-user.repository';
 
 @Injectable()
 export class UserRepository extends AbstractUserRepository {
-  constructor(private readonly prismaService: PrismaService) {
-    super();
-  }
+  @Inject()
+  private readonly prismaService: PrismaService;
 
   createUser(name: string, email: string, password: string): Promise<User> {
     return this.prismaService.user.create({
