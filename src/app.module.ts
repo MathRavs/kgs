@@ -7,6 +7,8 @@ import { ConfigurationDataLoader } from '@core/configuration/configuration';
 import { EncryptionModule } from '@core/encryption/encryption.module';
 import { UrlShortenerModule } from '@feature/url-shortener/url-shortener.module';
 import { CacheModule } from '@core/cache/cache.module';
+import { LoggingModule } from '@core/logging/logging.module';
+import { RequestContextModule } from '@core/request-context/request-context.module';
 
 const features = [UrlShortenerModule];
 
@@ -20,9 +22,11 @@ const features = [UrlShortenerModule];
         abortEarly: true,
       },
     }),
+    LoggingModule,
     CacheModule,
     DatabaseModule,
     EncryptionModule,
+    RequestContextModule,
     ...CoreFeatures,
     ...features,
   ],
