@@ -1,5 +1,5 @@
 import { AbstractUrlShortenerRepository } from '../abstract/abstract-url-shortener.repository';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Prisma, ShortenedUrls } from '@prisma/client';
 import { PrismaService } from '@core/database/prisma.service';
 import {
@@ -10,9 +10,8 @@ import { UrlMetadataType } from '../../../url-metadata/types/url-metadata.type';
 
 @Injectable()
 export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
-  constructor(private prismaService: PrismaService) {
-    super();
-  }
+  @Inject()
+  private readonly prismaService: PrismaService;
 
   create(
     ownerId: string,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AbstractUrlShortenerService } from '../abstract/abstract-url-shortener.service';
 import { ShortenedUrls } from '@prisma/client';
 import * as MD5 from 'crypto-js/md5';
@@ -12,13 +12,17 @@ import { AbstractUrlMetadataService } from '@feature/url-metadata/services/abstr
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
-  constructor(
-    private readonly urlShortenerRepository: AbstractUrlShortenerRepository,
-    private readonly abstractSequenceRepository: AbstractSequenceManagerRepository,
-    private readonly metadataService: AbstractUrlMetadataService,
-  ) {
-    super();
-  }
+  @Inject()
+  private readonly urlShortenerRepository: AbstractUrlShortenerRepository;
+
+  @Inject()
+  private readonly abstractSequenceRepository: AbstractSequenceManagerRepository;
+
+  @Inject()
+  private readonly metadataService: AbstractUrlMetadataService;
+
+  @Inject()
+  private readonly logger: Logger;
 
   private readonly md5LengthToTakeIntoAccount = 7;
 
@@ -27,37 +31,68 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     url: string,
     ownerId: string,
   ): Promise<ShortenedUrls> {
+    this.logger.log(`Creating shortened url`, this.constructor.name);
+
     const metadata = await this.metadataService.getMetadata(url);
 
+    this.logger.debug(`Metadata fetched`, this.constructor.name);
+
     let urlKey = this.getMd5Suffix(MD5(url).toString());
+
+    this.logger.debug(`Url key created`, this.constructor.name);
+
+    this.logger.debug(
+      'checking if the key already exists',
+      this.constructor.name,
+    );
 
     const existingUrl = await this.urlShortenerRepository.findByKey(
       Base62.encode(urlKey),
     );
 
     if (existingUrl) {
+      this.logger.debug(
+        'the key already exists, creating a new one',
+        this.constructor.name,
+      );
+
       const prefix = await this.createSequenceForKey();
       urlKey = `${prefix}${urlKey}`;
+
+      this.logger.debug('new key created', this.constructor.name);
     }
 
-    return this.urlShortenerRepository.create(
+    const shortenedUrl = await this.urlShortenerRepository.create(
       ownerId,
       await this.createEncodedUrl(urlKey),
       url,
       name,
       metadata,
     );
+
+    this.logger.log('Shortened url created', this.constructor.name);
+
+    return shortenedUrl;
   }
 
   async getShortenedUrls(
     ownerId: string,
     pagination: PaginationDto,
   ): Promise<PaginatedResult<ShortenedUrls>> {
-    return this.urlShortenerRepository.list(
+    this.logger.log(
+      `Retrieving shortened urls for user ${ownerId}`,
+      this.constructor.name,
+    );
+
+    const urls = await this.urlShortenerRepository.list(
       ownerId,
       pagination.page,
       pagination.limit,
     );
+
+    this.logger.log(`Urls retrieved ${ownerId}`, this.constructor.name);
+
+    return urls;
   }
 
   /**
@@ -66,7 +101,13 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
    * @param ownerId
    */
   async getShortenedUrlByKey(key: string): Promise<ShortenedUrls> {
-    return this.urlShortenerRepository.findByKeyOrThrow(key);
+    this.logger.log(`Retrieving shortened url ${key}`, this.constructor.name);
+
+    const shortenedUrl =
+      await this.urlShortenerRepository.findByKeyOrThrow(key);
+
+    this.logger.log(`shortened url ${key} retrieved`, this.constructor.name);
+    return shortenedUrl;
   }
 
   private getMd5Suffix(MD5FromUrl: string): string {
