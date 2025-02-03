@@ -22,4 +22,6 @@ export abstract class AbstractUrlShortenerRepository {
   abstract findByKeyOrThrow(key: string): Promise<ShortenedUrls>;
 
   abstract findByKey(key: string): Promise<ShortenedUrls | undefined>;
+
+  abstract incrementNumberOfTimesViewed(key: string): Promise<void>;
 }

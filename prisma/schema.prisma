@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["typedSql"]
 }
 
 datasource db {
@@ -36,6 +37,7 @@ model ShortenedUrls {
   ownerId              String
   url                  String
   name                 String
+  times_accessed       Int     @default(0)
   metadata_title       String  @default("")
   metadata_description String  @default("")
   metadata_sitename    String  @default("")

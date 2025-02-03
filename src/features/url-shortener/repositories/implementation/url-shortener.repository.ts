@@ -6,6 +6,7 @@ import {
   paginate,
   PaginatedResult,
 } from '@core/pagination/utils/prisma-pagination.util';
+import { shortenedUrlIncrementViews } from '@prisma/client/sql';
 import { UrlMetadataType } from '../../../url-metadata/types/url-metadata.type';
 
 @Injectable()
@@ -69,5 +70,10 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
 
   findAll(): Promise<ShortenedUrls[]> {
     return this.prismaService.shortenedUrls.findMany();
+  }
+
+  async incrementNumberOfTimesViewed(key: string): Promise<void> {
+    await this.prismaService.$queryRawTyped(shortenedUrlIncrementViews(key));
+    return undefined;
   }
 }

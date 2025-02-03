@@ -16,4 +16,6 @@ export abstract class AbstractUrlShortenerService {
   ): Promise<PaginatedResult<ShortenedUrls>>;
 
   abstract getShortenedUrlByKey(key: string): Promise<ShortenedUrls>;
+
+  abstract incrementNumberOfTimesViewed(key: string): Promise<void>;
 }

@@ -91,6 +91,17 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     return shortenedUrl;
   }
 
+  async incrementNumberOfTimesViewed(key: string): Promise<void> {
+    this.logger.log(
+      `Incrementing number of times viewed for shortened url ${key}`,
+      this.constructor.name,
+    );
+
+    await this.urlShortenerRepository.incrementNumberOfTimesViewed(key);
+
+    this.logger.log(`Number of views incremented`, this.constructor.name);
+  }
+
   private getMd5Suffix(
     MD5FromUrl: string,
     length = this.md5LengthToTakeIntoAccount,

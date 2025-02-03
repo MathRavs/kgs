@@ -8,7 +8,6 @@ import {
   Redirect,
   Request,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AbstractUrlShortenerService } from './services/abstract/abstract-url-shortener.service';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
@@ -21,7 +20,6 @@ import {
 } from '@core/pagination/dto/pagination.dto';
 import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pagination-dto.mapper';
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/shortened-url-response.dto';
 import { OpenApiPaginationResponse } from '@core/pagination/decorators/api-ok-response-paginated.decorator';
 
@@ -75,12 +73,12 @@ export class UrlShortenerController {
   }
 
   @Get(':key')
-  @CacheTTL(20_000)
-  @UseInterceptors(CacheInterceptor)
   @Redirect()
-  async getCorrespondingUrl(@Param('key') key: string) {
+  async viewCorrespondingUrl(@Param('key') key: string) {
     const shortenedUrl =
       await this.urlShortenerService.getShortenedUrlByKey(key);
+
+    await this.urlShortenerService.incrementNumberOfTimesViewed(key);
 
     return { url: shortenedUrl.url };
   }
