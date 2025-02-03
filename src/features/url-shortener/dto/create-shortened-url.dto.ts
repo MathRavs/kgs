@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUrl, Matches } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateShortenedUrlDto {
   @IsUrl()
@@ -6,4 +7,9 @@ export class CreateShortenedUrlDto {
 
   @IsNotEmpty()
   name: string;
+
+  @IsOptional()
+  @Matches(/^[a-zA-Z0-9-]+$/, { message: 'Value must be alphanumeric' })
+  @Transform(({ value }) => value || undefined)
+  customUrl?: string;
 }

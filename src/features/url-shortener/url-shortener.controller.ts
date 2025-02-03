@@ -44,6 +44,7 @@ export class UrlShortenerController {
         data.name,
         data.url,
         user.id,
+        data.customUrl,
       ),
     );
   }
