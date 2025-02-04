@@ -31,16 +31,17 @@ model ApiKey {
 }
 
 model ShortenedUrls {
-  id                   String  @id @default(uuid())
-  key                  String  @unique
-  owner                User    @relation(fields: [ownerId], references: [id])
+  id                   String    @id @default(uuid())
+  key                  String    @unique
+  owner                User      @relation(fields: [ownerId], references: [id])
   ownerId              String
   url                  String
   name                 String
-  times_accessed       Int     @default(0)
-  metadata_title       String  @default("")
-  metadata_description String  @default("")
-  metadata_sitename    String  @default("")
+  expirationDate       DateTime? @db.Timestamptz
+  times_accessed       Int       @default(0)
+  metadata_title       String    @default("")
+  metadata_description String    @default("")
+  metadata_sitename    String    @default("")
   metadata_image       String?
   metadata_favicon     String?
 }

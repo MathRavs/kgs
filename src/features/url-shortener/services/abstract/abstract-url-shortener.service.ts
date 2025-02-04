@@ -7,7 +7,8 @@ export abstract class AbstractUrlShortenerService {
     name: string,
     url: string,
     ownerId: string,
-    customUrl?: string | null,
+    customUrl?: string,
+    expirationDate?: Date,
   ): Promise<ShortenedUrls>;
 
   abstract getShortenedUrls(
@@ -15,7 +16,23 @@ export abstract class AbstractUrlShortenerService {
     pagination: PaginationDto,
   ): Promise<PaginatedResult<ShortenedUrls>>;
 
+  /**
+   * @description get the target url by key
+   * @param {string} key
+   */
   abstract getShortenedUrlByKey(key: string): Promise<ShortenedUrls>;
+
+  /**
+   * get the target url by key
+   * @description
+   * This function retrieves the url object by key
+   * Then checks if the url is expired
+   * Throws an error if so
+   * Then increments the view count
+   * Then returns the url object
+   * @param {string} key
+   */
+  abstract accessShortenedUrlByKey(key: string): Promise<ShortenedUrls>;
 
   abstract incrementNumberOfTimesViewed(key: string): Promise<void>;
 }

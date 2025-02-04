@@ -10,6 +10,7 @@ import { PaginationDto } from '@core/pagination/dto/pagination.dto';
 import { PaginatedResult } from '@core/pagination/utils/prisma-pagination.util';
 import { AbstractUrlMetadataService } from '@feature/url-metadata/services/abstract/abstract-url-metadata.service';
 import { generateRandomCharacters } from '@core/utils/random-text-generator.util';
+import { assertUrlStillValid } from '@feature/url-shortener/utils/url-shortener.utils';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
@@ -32,6 +33,7 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     url: string,
     ownerId: string,
     customUrl?: string,
+    expirationDate?: Date,
   ): Promise<ShortenedUrls> {
     this.logger.log(`Creating shortened url`, this.constructor.name);
 
@@ -51,6 +53,7 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
       url,
       name,
       metadata,
+      expirationDate,
     );
 
     this.logger.log('Shortened url created', this.constructor.name);
@@ -182,5 +185,27 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     this.logger.debug('new key created', this.constructor.name);
 
     return key;
+  }
+
+  async accessShortenedUrlByKey(key: string): Promise<ShortenedUrls> {
+    this.logger.debug('accessing the url', this.constructor.name);
+
+    const url = await this.getShortenedUrlByKey(key);
+
+    this.logger.debug(
+      'validating if the url is expired',
+      this.constructor.name,
+    );
+
+    assertUrlStillValid(url);
+
+    this.logger.debug(
+      'validating if the url is expired',
+      this.constructor.name,
+    );
+
+    await this.incrementNumberOfTimesViewed(key);
+
+    return url;
   }
 }

@@ -43,6 +43,7 @@ export class UrlShortenerController {
         data.url,
         user.id,
         data.customUrl,
+        data.expirationDate,
       ),
     );
   }
@@ -76,9 +77,7 @@ export class UrlShortenerController {
   @Redirect()
   async viewCorrespondingUrl(@Param('key') key: string) {
     const shortenedUrl =
-      await this.urlShortenerService.getShortenedUrlByKey(key);
-
-    await this.urlShortenerService.incrementNumberOfTimesViewed(key);
+      await this.urlShortenerService.accessShortenedUrlByKey(key);
 
     return { url: shortenedUrl.url };
   }
