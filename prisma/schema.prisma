@@ -31,18 +31,31 @@ model ApiKey {
 }
 
 model ShortenedUrls {
-  id                   String    @id @default(uuid())
-  key                  String    @unique
-  owner                User      @relation(fields: [ownerId], references: [id])
+  id                   String               @id @default(uuid())
+  key                  String               @unique
+  owner                User                 @relation(fields: [ownerId], references: [id])
   ownerId              String
   url                  String
   name                 String
   password             String?
-  expirationDate       DateTime? @db.Timestamptz
-  times_accessed       Int       @default(0)
-  metadata_title       String    @default("")
-  metadata_description String    @default("")
-  metadata_sitename    String    @default("")
+  expirationDate       DateTime?            @db.Timestamptz
+  times_accessed       Int                  @default(0)
+  metadata_title       String               @default("")
+  metadata_description String               @default("")
+  metadata_sitename    String               @default("")
   metadata_image       String?
   metadata_favicon     String?
+  TemporaryAccessUrl   TemporaryAccessUrl[]
+
+  @@index([key], type: Hash)
+}
+
+model TemporaryAccessUrl {
+  id             String        @id @default(uuid())
+  key            String
+  accessed       Boolean       @default(false)
+  shortenedUrlId String
+  shortenedUrl   ShortenedUrls @relation(fields: [shortenedUrlId], references: [id])
+
+  @@index([key], type: Hash)
 }
