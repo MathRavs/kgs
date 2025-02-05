@@ -21,6 +21,7 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
     name: string,
     metadata: UrlMetadataType,
     expirationDate?: Date,
+    password?: string,
   ): Promise<ShortenedUrls> {
     return this.prismaService.shortenedUrls.create({
       data: {
@@ -34,6 +35,7 @@ export class UrlShortenerRepository extends AbstractUrlShortenerRepository {
         metadata_favicon: metadata.favicon,
         metadata_image: metadata.image,
         expirationDate,
+        password,
       },
     });
   }

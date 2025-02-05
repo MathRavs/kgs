@@ -37,6 +37,7 @@ model ShortenedUrls {
   ownerId              String
   url                  String
   name                 String
+  password             String?
   expirationDate       DateTime? @db.Timestamptz
   times_accessed       Int       @default(0)
   metadata_title       String    @default("")

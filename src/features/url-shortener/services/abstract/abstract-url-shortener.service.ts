@@ -1,14 +1,11 @@
 import { ShortenedUrls } from '@prisma/client';
 import { PaginationDto } from '@core/pagination/dto/pagination.dto';
 import { PaginatedResult } from '@core/pagination/utils/prisma-pagination.util';
+import { CreateShortenedUrlInput } from '@feature/url-shortener/dto/service_layer/create-shortened-url.input';
 
 export abstract class AbstractUrlShortenerService {
   abstract createShortenedUrl(
-    name: string,
-    url: string,
-    ownerId: string,
-    customUrl?: string,
-    expirationDate?: Date,
+    input: CreateShortenedUrlInput,
   ): Promise<ShortenedUrls>;
 
   abstract getShortenedUrls(

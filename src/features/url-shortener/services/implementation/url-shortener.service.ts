@@ -10,7 +10,12 @@ import { PaginationDto } from '@core/pagination/dto/pagination.dto';
 import { PaginatedResult } from '@core/pagination/utils/prisma-pagination.util';
 import { AbstractUrlMetadataService } from '@feature/url-metadata/services/abstract/abstract-url-metadata.service';
 import { generateRandomCharacters } from '@core/utils/random-text-generator.util';
-import { assertUrlStillValid } from '@feature/url-shortener/utils/url-shortener.utils';
+import {
+  assertUrlIsNotSecured,
+  assertUrlStillValid,
+} from '@feature/url-shortener/utils/url-shortener.utils';
+import { BcryptService } from '@core/encryption/bcrypt.service';
+import { CreateShortenedUrlInput } from '@feature/url-shortener/dto/service_layer/create-shortened-url.input';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
@@ -26,15 +31,16 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
   @Inject()
   private readonly logger: Logger;
 
+  @Inject()
+  private readonly bcryptService: BcryptService;
+
   private readonly md5LengthToTakeIntoAccount = 7;
 
   async createShortenedUrl(
-    name: string,
-    url: string,
-    ownerId: string,
-    customUrl?: string,
-    expirationDate?: Date,
+    input: CreateShortenedUrlInput,
   ): Promise<ShortenedUrls> {
+    const { name, url, customUrl, expirationDate, ownerId, password } = input;
+
     this.logger.log(`Creating shortened url`, this.constructor.name);
 
     this.logger.debug(`Fetching metadata`, this.constructor.name);
@@ -47,6 +53,10 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
       ? this.manageCustomUrl(customUrl)
       : this.generateRandomKey(url));
 
+    const customPassword = password
+      ? this.bcryptService.hashPassword(password)
+      : undefined;
+
     const shortenedUrl = await this.urlShortenerRepository.create(
       ownerId,
       key,
@@ -54,6 +64,7 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
       name,
       metadata,
       expirationDate,
+      customPassword,
     );
 
     this.logger.log('Shortened url created', this.constructor.name);
@@ -193,16 +204,18 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     const url = await this.getShortenedUrlByKey(key);
 
     this.logger.debug(
-      'validating if the url is expired',
+      'validating if the url is secured',
       this.constructor.name,
     );
 
-    assertUrlStillValid(url);
+    assertUrlIsNotSecured(url);
 
     this.logger.debug(
       'validating if the url is expired',
       this.constructor.name,
     );
+
+    assertUrlStillValid(url);
 
     await this.incrementNumberOfTimesViewed(key);
 

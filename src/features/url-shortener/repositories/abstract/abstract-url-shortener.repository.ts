@@ -10,6 +10,7 @@ export abstract class AbstractUrlShortenerRepository {
     name: string,
     metadata: UrlMetadataType,
     expirationDate?: Date,
+    password?: string,
   ): Promise<ShortenedUrls>;
 
   abstract list(

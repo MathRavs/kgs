@@ -3,6 +3,7 @@ import {
   IsOptional,
   IsUrl,
   Matches,
+  MinLength,
   Validate,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -25,4 +26,8 @@ export class CreateShortenedUrlDto {
   @Transform(({ value }) => transformToIsoDateOrUndefined(value))
   @Validate(IsFutureDateConstraint)
   expirationDate?: Date;
+
+  @IsOptional()
+  @MinLength(8)
+  password?: string;
 }

@@ -1,6 +1,6 @@
 import { ShortenedUrls } from '@prisma/client';
 import { isFuture } from 'date-fns';
-import { GoneException } from '@nestjs/common';
+import { ForbiddenException, GoneException } from '@nestjs/common';
 
 /**
  * @description validate if the url is a expired or not
@@ -14,5 +14,11 @@ export const assertUrlStillValid = (shortenedUrl: ShortenedUrls) => {
     throw new GoneException(
       'The requested url has expired and cannot be accessed.',
     );
+  }
+};
+
+export const assertUrlIsNotSecured = (shortenedUrl: ShortenedUrls) => {
+  if (shortenedUrl.password) {
+    throw new ForbiddenException('the requested url is secured');
   }
 };

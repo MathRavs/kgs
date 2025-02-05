@@ -13,15 +13,15 @@ import { AbstractUrlShortenerService } from './services/abstract/abstract-url-sh
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ApiKeyGuard } from '@core/features/api-keys/guards/api-key.guard';
 import { User } from '@prisma/client';
-import { CreateShortenedUrlDto } from './dto/create-shortened-url.dto';
+import { CreateShortenedUrlDto } from './dto/controller_layer/create-shortened-url.dto';
 import {
   PaginationDto,
   PaginationResponseDto,
 } from '@core/pagination/dto/pagination.dto';
 import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pagination-dto.mapper';
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
-import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/shortened-url-response.dto';
 import { OpenApiPaginationResponse } from '@core/pagination/decorators/api-ok-response-paginated.decorator';
+import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/controller_layer/shortened-url-response.dto';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
@@ -39,11 +39,7 @@ export class UrlShortenerController {
   ) {
     return ShortenedUrlMapper.toResponse(
       await this.urlShortenerService.createShortenedUrl(
-        data.name,
-        data.url,
-        user.id,
-        data.customUrl,
-        data.expirationDate,
+        ShortenedUrlMapper.toCreateShortenedUrlInput(data, user.id),
       ),
     );
   }
