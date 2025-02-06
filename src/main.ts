@@ -12,7 +12,7 @@ async function bootstrap() {
         : ['log', 'error', 'warn', 'debug', 'verbose'],
   });
 
-  app.useGlobalFilters(new PrismaExceptionFilter());
+  app.useGlobalFilters(app.get(PrismaExceptionFilter));
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

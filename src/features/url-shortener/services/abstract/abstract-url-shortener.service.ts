@@ -1,4 +1,4 @@
-import { ShortenedUrls } from '@prisma/client';
+import { ShortenedUrls, TemporaryAccessUrl } from '@prisma/client';
 import { PaginationDto } from '@core/pagination/dto/pagination.dto';
 import { PaginatedResult } from '@core/pagination/utils/prisma-pagination.util';
 import { CreateShortenedUrlInput } from '@feature/url-shortener/dto/service_layer/create-shortened-url.input';
@@ -32,4 +32,9 @@ export abstract class AbstractUrlShortenerService {
   abstract accessShortenedUrlByKey(key: string): Promise<ShortenedUrls>;
 
   abstract incrementNumberOfTimesViewed(key: string): Promise<void>;
+
+  abstract generateTemporaryUrl(
+    key: string,
+    password: string,
+  ): Promise<TemporaryAccessUrl>;
 }

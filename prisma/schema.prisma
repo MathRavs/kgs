@@ -52,8 +52,9 @@ model ShortenedUrls {
 
 model TemporaryAccessUrl {
   id             String        @id @default(uuid())
-  key            String
+  key            String        @unique
   accessed       Boolean       @default(false)
+  expirationDate DateTime
   shortenedUrlId String
   shortenedUrl   ShortenedUrls @relation(fields: [shortenedUrlId], references: [id])
 

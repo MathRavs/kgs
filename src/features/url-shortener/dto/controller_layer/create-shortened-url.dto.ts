@@ -18,7 +18,10 @@ export class CreateShortenedUrlDto {
   name: string;
 
   @IsOptional()
-  @Matches(/^[a-zA-Z0-9-]+$/, { message: 'Value must be alphanumeric' })
+  @Matches(/^[a-zA-Z0-9-]+$/, {
+    message:
+      'the custom url must be alphanumeric and should only contains a-zA-Z0-9-',
+  })
   @Transform(({ value }) => value || undefined)
   customUrl?: string;
 

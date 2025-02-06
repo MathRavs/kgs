@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   Query,
@@ -22,13 +23,14 @@ import { mapPaginationResultToPaginationDto } from '@core/pagination/mappers/pag
 import { ShortenedUrlMapper } from './mapper/shortened-url.mapper';
 import { OpenApiPaginationResponse } from '@core/pagination/decorators/api-ok-response-paginated.decorator';
 import { ShortenedUrlResponseDto } from '@feature/url-shortener/dto/controller_layer/shortened-url-response.dto';
+import { AccessSecuredUrlDto } from '@feature/url-shortener/dto/controller_layer/access-secured-url.dto';
+import { TemporaryAccessUrlMapper } from '@feature/url-shortener/mapper/temporary-access-url.mapper';
 
 @ApiTags('url-shortener')
 @Controller('url-shortener')
 export class UrlShortenerController {
-  constructor(
-    private readonly urlShortenerService: AbstractUrlShortenerService,
-  ) {}
+  @Inject()
+  private readonly urlShortenerService: AbstractUrlShortenerService;
 
   @ApiSecurity('api-key')
   @Post('shorten')
@@ -76,5 +78,15 @@ export class UrlShortenerController {
       await this.urlShortenerService.accessShortenedUrlByKey(key);
 
     return { url: shortenedUrl.url };
+  }
+
+  @Post('access-secured-url')
+  async getSecuredUrlTemporaryLink(@Body() dto: AccessSecuredUrlDto) {
+    return TemporaryAccessUrlMapper.toResponse(
+      await this.urlShortenerService.generateTemporaryUrl(
+        dto.key,
+        dto.password,
+      ),
+    );
   }
 }

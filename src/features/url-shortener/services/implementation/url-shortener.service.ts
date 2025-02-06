@@ -1,6 +1,6 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
 import { AbstractUrlShortenerService } from '../abstract/abstract-url-shortener.service';
-import { ShortenedUrls } from '@prisma/client';
+import { ShortenedUrls, TemporaryAccessUrl } from '@prisma/client';
 import * as MD5 from 'crypto-js/md5';
 import { AbstractUrlShortenerRepository } from '../../repositories/abstract/abstract-url-shortener.repository';
 import { AbstractSequenceManagerRepository } from '@core/database/repositories/abstract/abstract-sequence-manager.repository';
@@ -12,10 +12,13 @@ import { AbstractUrlMetadataService } from '@feature/url-metadata/services/abstr
 import { generateRandomCharacters } from '@core/utils/random-text-generator.util';
 import {
   assertUrlIsNotSecured,
+  assertUrlIsSecured,
   assertUrlStillValid,
+  createExpirationDate,
 } from '@feature/url-shortener/utils/url-shortener.utils';
 import { BcryptService } from '@core/encryption/bcrypt.service';
 import { CreateShortenedUrlInput } from '@feature/url-shortener/dto/service_layer/create-shortened-url.input';
+import { AbstractTemporaryAccessUrlRepository } from '@feature/url-shortener/repositories/abstract/abstract-temporary-access-url.repository';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
@@ -27,6 +30,9 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
 
   @Inject()
   private readonly metadataService: AbstractUrlMetadataService;
+
+  @Inject()
+  private readonly abstractTemporaryUrlRepository: AbstractTemporaryAccessUrlRepository;
 
   @Inject()
   private readonly logger: Logger;
@@ -116,6 +122,82 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     this.logger.log(`Number of views incremented`, this.constructor.name);
   }
 
+  async accessShortenedUrlByKey(key: string): Promise<ShortenedUrls> {
+    this.logger.debug('accessing the url', this.constructor.name);
+
+    const url = await this.getShortenedUrlByKey(key);
+
+    this.logger.debug(
+      'validating if the url is secured',
+      this.constructor.name,
+    );
+
+    assertUrlIsNotSecured(url);
+
+    this.logger.debug(
+      'validating if the url is expired',
+      this.constructor.name,
+    );
+
+    assertUrlStillValid(url);
+
+    await this.incrementNumberOfTimesViewed(key);
+
+    return url;
+  }
+
+  async generateTemporaryUrl(
+    key: string,
+    password: string,
+  ): Promise<TemporaryAccessUrl> {
+    this.logger.log('Accessing secured url', this.constructor.name);
+
+    this.logger.debug('retrieving the url', this.constructor.name);
+
+    const originalShortedUrl = await this.getShortenedUrlByKey(key);
+
+    this.logger.debug('url retrieved', this.constructor.name);
+
+    assertUrlStillValid(originalShortedUrl);
+    assertUrlIsSecured(originalShortedUrl);
+
+    if (
+      !this.bcryptService.verifyPassword(password, originalShortedUrl.password)
+    ) {
+      throw new ForbiddenException('The given password is incorrect');
+    }
+
+    this.logger.debug('the url is secure', this.constructor.name);
+
+    const urlMd5 = MD5(key);
+
+    let temporaryUrlKey = `${this.createEncodedUrl(urlMd5 + generateRandomCharacters(2))}`;
+
+    while (
+      await this.abstractTemporaryUrlRepository.getTemporaryAccessUrlByKey(key)
+    ) {
+      this.logger.debug(
+        'duplicate key found for temporary access url, generating a new key',
+        this.constructor.name,
+      );
+
+      temporaryUrlKey = `${this.createEncodedUrl(urlMd5 + generateRandomCharacters(2))}`;
+    }
+
+    this.logger.debug('key generated', this.constructor.name);
+
+    const temporaryUrl =
+      await this.abstractTemporaryUrlRepository.createTemporaryAccessUrl(
+        temporaryUrlKey,
+        originalShortedUrl.id,
+        createExpirationDate(2),
+      );
+
+    this.logger.debug('temporary url generated', this.constructor.name);
+
+    return temporaryUrl;
+  }
+
   private getMd5Suffix(
     MD5FromUrl: string,
     length = this.md5LengthToTakeIntoAccount,
@@ -133,7 +215,7 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     return nextVal.id;
   }
 
-  private async createEncodedUrl(key: string): Promise<string> {
+  private createEncodedUrl(key: string): string {
     return Base62.encode(key);
   }
 
@@ -196,29 +278,5 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     this.logger.debug('new key created', this.constructor.name);
 
     return key;
-  }
-
-  async accessShortenedUrlByKey(key: string): Promise<ShortenedUrls> {
-    this.logger.debug('accessing the url', this.constructor.name);
-
-    const url = await this.getShortenedUrlByKey(key);
-
-    this.logger.debug(
-      'validating if the url is secured',
-      this.constructor.name,
-    );
-
-    assertUrlIsNotSecured(url);
-
-    this.logger.debug(
-      'validating if the url is expired',
-      this.constructor.name,
-    );
-
-    assertUrlStillValid(url);
-
-    await this.incrementNumberOfTimesViewed(key);
-
-    return url;
   }
 }

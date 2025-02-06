@@ -1,5 +1,5 @@
 import { ShortenedUrls } from '@prisma/client';
-import { isFuture } from 'date-fns';
+import { addDays, isFuture } from 'date-fns';
 import { ForbiddenException, GoneException } from '@nestjs/common';
 
 /**
@@ -21,4 +21,17 @@ export const assertUrlIsNotSecured = (shortenedUrl: ShortenedUrls) => {
   if (shortenedUrl.password) {
     throw new ForbiddenException('the requested url is secured');
   }
+};
+
+export const assertUrlIsSecured = (shortenedUrl: ShortenedUrls) => {
+  if (!shortenedUrl.password) {
+    throw new ForbiddenException('the requested url is not secured');
+  }
+};
+
+/**
+ * @param {number} lifetime number of days
+ */
+export const createExpirationDate = (lifetime: number) => {
+  return addDays(new Date(), lifetime);
 };
