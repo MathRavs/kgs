@@ -16,6 +16,7 @@ export const ShortenedUrlMapper = {
       data.metadata_image,
       data.metadata_favicon,
       data.times_accessed,
+      data.createdAt,
       data.password,
     );
   },

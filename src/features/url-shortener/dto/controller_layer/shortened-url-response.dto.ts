@@ -8,6 +8,7 @@ export class ShortenedUrlResponseDto {
   metadata: UrlMetadataResponseDto;
   secured: boolean;
   numberOfTimesViewed: number;
+  createdAt: Date;
 
   constructor(
     id: string,
@@ -20,6 +21,7 @@ export class ShortenedUrlResponseDto {
     metadataImage: string | null,
     metadataFavicon: string | null,
     numberOfTimesViewed: number,
+    createdAt: Date,
     password?: string,
   ) {
     this.id = id;
@@ -28,6 +30,7 @@ export class ShortenedUrlResponseDto {
     this.key = key;
     this.secured = Boolean(password);
     this.numberOfTimesViewed = numberOfTimesViewed;
+    this.createdAt = createdAt;
 
     this.metadata = new UrlMetadataResponseDto(
       metadataTitle,
