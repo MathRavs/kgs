@@ -7,4 +7,6 @@ export abstract class AbstractApiKeyService {
   abstract create(ownerId: string): Promise<ApiKey>;
 
   abstract list(ownerId: string): Promise<ApiKey[]>;
+
+  abstract deleteById(id: string, ownerId: string): Promise<void>;
 }

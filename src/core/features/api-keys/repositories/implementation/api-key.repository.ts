@@ -20,6 +20,14 @@ export class ApiKeyRepository extends AbstractApiKeyRepository {
     });
   }
 
+  findByIdOrThrow(id: string): Promise<ApiKey> {
+    return this.prismaService.apiKey.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+  }
+
   findKeys(ownerId: string): Promise<ApiKey[]> {
     return this.prismaService.apiKey.findMany({
       where: {
@@ -33,6 +41,14 @@ export class ApiKeyRepository extends AbstractApiKeyRepository {
       data: {
         key,
         ownerId,
+      },
+    });
+  }
+
+  deleteById(id: string): Promise<ApiKey> {
+    return this.prismaService.apiKey.delete({
+      where: {
+        id,
       },
     });
   }

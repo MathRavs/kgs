@@ -4,6 +4,7 @@ import { ApiKey } from '@prisma/client';
 import { AbstractApiKeyRepository } from '../../repositories/abstract/abstract-api-key.repository';
 import { generateRandomCharacters } from '@core/utils/random-text-generator.util';
 import { ApiKeyWithOwner } from '../../types/api-key.type';
+import { assertApiKeyUserSameAsCurrentUser } from '@core/features/api-keys/utils/api-key.utils';
 
 @Injectable()
 export class ApiKeyService extends AbstractApiKeyService {
@@ -61,6 +62,24 @@ export class ApiKeyService extends AbstractApiKeyService {
       this.constructor.name,
     );
     return keys;
+  }
+
+  async deleteById(id: string, ownerId: string) {
+    this.logger.log(`Deleting by id`, this.constructor.name);
+
+    this.logger.debug(`Retrieving the api key`, this.constructor.name);
+
+    const apiKey = await this.apiKeyRepository.findByIdOrThrow(id);
+
+    this.logger.debug(`api key retrieved`, this.constructor.name);
+
+    assertApiKeyUserSameAsCurrentUser(apiKey, ownerId);
+
+    this.logger.debug(`api key user validated`, this.constructor.name);
+
+    await this.apiKeyRepository.deleteById(id);
+
+    this.logger.log(`api key deleted`, this.constructor.name);
   }
 
   private checkIfApiKeyExists(apiKeys: ApiKey[], key: string): boolean {
