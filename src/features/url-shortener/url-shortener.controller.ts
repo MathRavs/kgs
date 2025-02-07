@@ -71,6 +71,13 @@ export class UrlShortenerController {
     );
   }
 
+  @Get('temporary-access-url/:key')
+  @Redirect()
+  async accessTemporaryLink(@Param('key') key: string) {
+    const shortenedUrl = await this.urlShortenerService.accessTemporaryUrl(key);
+    return { url: shortenedUrl.url };
+  }
+
   @Get(':key')
   @Redirect()
   async viewCorrespondingUrl(@Param('key') key: string) {

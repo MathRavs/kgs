@@ -37,4 +37,6 @@ export abstract class AbstractUrlShortenerService {
     key: string,
     password: string,
   ): Promise<TemporaryAccessUrl>;
+
+  abstract accessTemporaryUrl(key: string): Promise<ShortenedUrls>;
 }

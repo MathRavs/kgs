@@ -1,40 +1,23 @@
 export const Base62 = (() => {
-  const charset =
-    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const base = charset.length;
+  const BASE62_CHARSET =
+    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
   return {
     encode(str: string): string {
-      // Convert string to a big integer representation
-      const num = [...str].reduce((acc, char) => {
-        return acc * 256 + char.codePointAt(0); // Use 256 to account for all ASCII characters
-      }, 0);
+      let num = BigInt(0);
 
-      // Encode the number to Base62
-      if (num === 0) return charset[0];
+      // Convert each character to its UTF-8 byte value and form a large number
+      for (let i = 0; i < str.length; i++) {
+        num = (num << BigInt(8)) + BigInt(str.codePointAt(i));
+      }
+
       let encoded = '';
-      let tempNum = num;
-      while (tempNum > 0) {
-        encoded = charset[tempNum % base] + encoded;
-        tempNum = Math.floor(tempNum / base);
+      while (num > 0) {
+        encoded = BASE62_CHARSET[Number(num % BigInt(62))] + encoded;
+        num = num / BigInt(62);
       }
-      return encoded;
-    },
 
-    decode(encodedStr) {
-      // Decode the Base62 string into a big integer
-      const num = [...encodedStr].reduce((acc, char) => {
-        return acc * base + charset.indexOf(char);
-      }, 0);
-
-      // Convert the big integer back into a string
-      const chars = [];
-      let tempNum = num;
-      while (tempNum > 0) {
-        chars.unshift(String.fromCodePoint(tempNum % 256));
-        tempNum = Math.floor(tempNum / 256);
-      }
-      return chars.join('');
+      return encoded || '0'; // Return "0" for empty input
     },
   };
 })();

@@ -19,6 +19,10 @@ import {
 import { BcryptService } from '@core/encryption/bcrypt.service';
 import { CreateShortenedUrlInput } from '@feature/url-shortener/dto/service_layer/create-shortened-url.input';
 import { AbstractTemporaryAccessUrlRepository } from '@feature/url-shortener/repositories/abstract/abstract-temporary-access-url.repository';
+import {
+  assertTemporaryUrlHasBeenAccessed,
+  assertTemporaryUrlIsExpired,
+} from '@feature/url-shortener/utils/temporary-access-url.utils';
 
 @Injectable()
 export class UrlShortenerService extends AbstractUrlShortenerService {
@@ -169,19 +173,25 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
 
     this.logger.debug('the url is secure', this.constructor.name);
 
-    const urlMd5 = MD5(key);
+    const urlMd5 = this.getMd5Suffix(MD5(key).toString(), 4);
 
-    let temporaryUrlKey = `${this.createEncodedUrl(urlMd5 + generateRandomCharacters(2))}`;
+    const generateKey = () => {
+      return this.createEncodedUrl(`${urlMd5}${generateRandomCharacters(4)}`);
+    };
+
+    let temporaryUrlKey = generateKey();
 
     while (
-      await this.abstractTemporaryUrlRepository.getTemporaryAccessUrlByKey(key)
+      await this.abstractTemporaryUrlRepository.getTemporaryAccessUrlByKey(
+        temporaryUrlKey,
+      )
     ) {
       this.logger.debug(
         'duplicate key found for temporary access url, generating a new key',
         this.constructor.name,
       );
 
-      temporaryUrlKey = `${this.createEncodedUrl(urlMd5 + generateRandomCharacters(2))}`;
+      temporaryUrlKey = generateKey();
     }
 
     this.logger.debug('key generated', this.constructor.name);
@@ -196,6 +206,33 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
     this.logger.debug('temporary url generated', this.constructor.name);
 
     return temporaryUrl;
+  }
+
+  async accessTemporaryUrl(key: string): Promise<ShortenedUrls> {
+    this.logger.log(
+      `Accessing the temporary access url`,
+      this.constructor.name,
+    );
+
+    const temporaryUrl =
+      await this.abstractTemporaryUrlRepository.getTemporaryAccessUrlByKey(key);
+
+    this.logger.debug(
+      `Validating if the temporary url is accessible`,
+      this.constructor.name,
+    );
+
+    assertTemporaryUrlIsExpired(temporaryUrl);
+
+    assertTemporaryUrlHasBeenAccessed(temporaryUrl);
+
+    assertUrlStillValid(temporaryUrl.shortenedUrl);
+
+    this.logger.log(`Temporary access url retrieved`, this.constructor.name);
+
+    await this.incrementNumberOfTimesViewed(temporaryUrl.shortenedUrl.key);
+
+    return temporaryUrl.shortenedUrl;
   }
 
   private getMd5Suffix(
@@ -216,6 +253,9 @@ export class UrlShortenerService extends AbstractUrlShortenerService {
   }
 
   private createEncodedUrl(key: string): string {
+    console.log({
+      key,
+    });
     return Base62.encode(key);
   }
 
