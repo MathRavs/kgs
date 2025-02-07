@@ -17,6 +17,7 @@ datasource db {
 model User {
   id            String          @id @default(uuid())
   email         String          @unique
+  createdAt     DateTime        @default(now())
   name          String?
   password      String
   apiKeys       ApiKey[]
@@ -24,15 +25,17 @@ model User {
 }
 
 model ApiKey {
-  id      String @id @default(uuid())
-  key     String @unique
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  key       String   @unique
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
 }
 
 model ShortenedUrls {
   id                   String               @id @default(uuid())
   key                  String               @unique
+  createdAt            DateTime             @default(now())
   owner                User                 @relation(fields: [ownerId], references: [id])
   ownerId              String
   url                  String
@@ -54,6 +57,7 @@ model TemporaryAccessUrl {
   id             String        @id @default(uuid())
   key            String        @unique
   accessed       Boolean       @default(false)
+  createdAt      DateTime      @default(now())
   expirationDate DateTime
   shortenedUrlId String
   shortenedUrl   ShortenedUrls @relation(fields: [shortenedUrlId], references: [id])
