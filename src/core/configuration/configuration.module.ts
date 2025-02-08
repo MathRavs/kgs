@@ -1,12 +1,53 @@
-import { ConfigModule } from '@nestjs/config';
-import { ConfigurationDataLoader } from '@core/configuration/configuration';
-import { validationSchema } from '@core/configuration/configuration.type';
-
-export const ConfigurationModule = ConfigModule.forRoot({
-  isGlobal: true,
-  load: [ConfigurationDataLoader],
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Global, Module } from '@nestjs/common';
+import { AbstractVaultService } from '@core/configuration/services/abstract/abstract-vault.service';
+import { VaultService } from '@core/configuration/services/implementation/vault.service';
+import * as process from 'node:process';
+import {
+  ConfigurationType,
   validationSchema,
-  validationOptions: {
-    abortEarly: true,
-  },
-});
+} from '@core/configuration/configuration.type';
+
+@Global()
+@Module({
+  providers: [
+    {
+      provide: AbstractVaultService,
+      useClass: VaultService,
+    },
+    {
+      provide: ConfigService,
+      inject: [AbstractVaultService],
+      useFactory: async (vaultService: AbstractVaultService) => {
+        const secrets = await vaultService.getSecrets(process.env.VAULT_PATH);
+
+        const configuration: ConfigurationType = {
+          DATABASE_URL: secrets.postgres_url,
+          BCRYPT_SALT: secrets.bcrypt_salt,
+          JWT_SECRET: secrets.jwt_secret,
+          REDIS_URL: secrets.redis_url,
+        };
+
+        const errors = validationSchema.validate(configuration, {
+          abortEarly: false,
+        });
+
+        if (errors.error) {
+          throw errors.error;
+        }
+
+        return {
+          get: (key: keyof ConfigurationType) => configuration[key],
+        };
+      },
+    },
+  ],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [() => ({})],
+    }),
+  ],
+  exports: [ConfigService],
+})
+export class ConfigurationModule {}

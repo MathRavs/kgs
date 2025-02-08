@@ -12,9 +12,7 @@ export const CacheModule = CacheManagerModule.registerAsync({
     configService: ConfigService<ConfigurationType>,
   ): Promise<CacheOptions> => {
     const keyv = new Keyv({
-      store: new KeyvRedis(
-        `redis://:${configService.get('REDIS_PASSWORD')}@${configService.get('REDIS_HOST')}:${configService.get('REDIS_PORT')}`,
-      ),
+      store: new KeyvRedis(configService.get('REDIS_URL')),
     });
 
     keyv.on('error', (err) => {
