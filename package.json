@@ -18,7 +18,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "email:dev": "email dev --dir src/core/email/templates --port 3001"
   },
   "dependencies": {
     "@keyv/redis": "^4.2.0",
@@ -32,6 +33,7 @@
     "@nestjs/platform-express": "^11.0.7",
     "@nestjs/swagger": "^11.0.3",
     "@prisma/client": "^6.2.1",
+    "@react-email/components": "^0.0.32",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cache-manager": "^6.4.0",
@@ -45,8 +47,10 @@
     "nest-winston": "^1.10.2",
     "nestjs-cls": "^5.0.1",
     "node-vault": "^0.10.2",
+    "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "react": "^19.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "uuid": "^11.0.5",
@@ -66,6 +70,8 @@
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^4.0.1",
+    "@types/react": "^19.0.8",
+    "react-dom": "^19.0.0",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
@@ -80,6 +86,7 @@
     "lint-staged": "^15.3.0",
     "prettier": "^3.0.0",
     "prisma": "^6.2.1",
+    "react-email": "^3.0.6",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.0",
@@ -106,8 +113,8 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "src/**/*.ts": "eslint --fix",
-    "*.{js,ts,json,yml,md}": "prettier --write"
+    "src/**/*.{ts,tsx}": "eslint --fix",
+    "*.{js,ts,json,yml,md, tsx}": "prettier --write"
   },
   "config": {
     "commitizen": {

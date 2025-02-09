@@ -6,7 +6,7 @@ import * as process from 'node:process';
 import {
   ConfigurationType,
   validationSchema,
-} from '@core/configuration/configuration.type';
+} from '@core/configuration/types/configuration.type';
 
 @Global()
 @Module({
@@ -26,6 +26,10 @@ import {
           BCRYPT_SALT: secrets.bcrypt_salt,
           JWT_SECRET: secrets.jwt_secret,
           REDIS_URL: secrets.redis_url,
+          EMAIL: {
+            password: secrets.email.password,
+            username: secrets.email.username,
+          },
         };
 
         const errors = validationSchema.validate(configuration, {
