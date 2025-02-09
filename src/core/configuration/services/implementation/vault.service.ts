@@ -28,6 +28,7 @@ export class VaultService extends AbstractVaultService {
   private async authenticateWithAppRole(): Promise<void> {
     try {
       this.logger.debug('Authenticating vault', this.constructor.name);
+
       const result = await this.vaultClient.approleLogin({
         role_id: process.env.VAULT_ROLE_ID,
         secret_id: process.env.VAULT_SECRET_ID,

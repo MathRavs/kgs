@@ -1,6 +1,5 @@
 import {
   Body,
-  Container,
   Head,
   Heading,
   Html,
@@ -12,6 +11,7 @@ import * as React from 'react';
 import { fontFamily } from '@core/email/templates/styles/base-style.constant';
 import { Logo } from '@core/email/templates/ui/logo';
 import { Button } from '@core/email/templates/ui/button';
+import { CardContainer } from '@core/email/templates/ui/card-container';
 
 interface LinearLoginCodeEmailProps {
   verificationUrl: string;
@@ -22,10 +22,12 @@ export const LinearLoginCodeEmail = ({
 }: LinearLoginCodeEmailProps) => (
   <Html>
     <Head />
-    <Preview>Your login code for Linear</Preview>
+    <Preview>Your account confirmation link from Shortly</Preview>
     <Body style={main}>
-      <Container style={container}>
-        <Logo />
+      <CardContainer>
+        <Section style={logoContainer}>
+          <Logo />
+        </Section>
         <Heading style={heading}>
           Your account verification confirmation
         </Heading>
@@ -35,7 +37,7 @@ export const LinearLoginCodeEmail = ({
         <Section>
           <Button link={verificationUrl} text="Verify your account" />
         </Section>
-      </Container>
+      </CardContainer>
     </Body>
   </Html>
 );
@@ -46,15 +48,17 @@ LinearLoginCodeEmail.PreviewProps = {
 
 export default LinearLoginCodeEmail;
 
+const logoContainer = {
+  display: 'flex',
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
 const main = {
   backgroundColor: '#ffffff',
   fontFamily: fontFamily,
-};
-
-const container: React.CSSProperties = {
-  margin: '0 auto',
-  padding: '20px 0 48px',
-  maxWidth: '560px',
+  marginTop: '15px',
 };
 
 const heading = {

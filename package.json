@@ -19,7 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
     "commit": "cz",
-    "email:dev": "email dev --dir src/core/email/templates --port 3001"
+    "email:dev": "cp .env ./node_modules/react-email/dist/preview && email dev --dir src/core/email/templates/emails --port 3001"
   },
   "dependencies": {
     "@keyv/redis": "^4.2.0",
@@ -31,6 +31,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.7",
+    "@nestjs/serve-static": "^5.0.2",
     "@nestjs/swagger": "^11.0.3",
     "@prisma/client": "^6.2.1",
     "@react-email/components": "^0.0.32",
@@ -71,7 +72,6 @@
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/react": "^19.0.8",
-    "react-dom": "^19.0.0",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
@@ -86,6 +86,7 @@
     "lint-staged": "^15.3.0",
     "prettier": "^3.0.0",
     "prisma": "^6.2.1",
+    "react-dom": "^19.0.0",
     "react-email": "^3.0.6",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",

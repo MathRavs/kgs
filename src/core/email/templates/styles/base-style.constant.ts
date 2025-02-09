@@ -18,3 +18,5 @@ export const colors = {
   white: '#ffffff',
   lochinvar: '#26767F',
 } as const;
+
+export const boxShadow = 'rgba(0, 0, 0, 0.16) 0px 1px 4px';

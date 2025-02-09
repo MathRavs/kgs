@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationType } from '../configuration/configuration.type';
+import { ConfigurationType } from '../configuration/types/configuration.type';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

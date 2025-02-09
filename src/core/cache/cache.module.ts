@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationType } from '../configuration/configuration.type';
+import { ConfigurationType } from '../configuration/types/configuration.type';
 import { CacheModule as CacheManagerModule } from '@nestjs/cache-manager';
 import { CacheOptions } from '@nestjs/cache-manager/dist/interfaces/cache-module.interface';
 import KeyvRedis from '@keyv/redis';

@@ -4,16 +4,14 @@ import * as React from 'react';
 
 export const Logo = () => (
   <Img
-    src={`${baseUrl}/static/linear-logo.png`}
-    width="42"
-    height="42"
+    src={`${baseUrl}/images/logo-color.svg`}
+    width="75"
+    height="75"
     alt="Linear"
     style={logo}
   />
 );
 
 const logo = {
-  borderRadius: 21,
-  width: 42,
-  height: 42,
+  borderRadius: '50%',
 };

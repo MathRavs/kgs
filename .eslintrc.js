@@ -33,5 +33,7 @@ module.exports = {
     'unicorn/no-abusive-eslint-disable': 'off',
     'unicorn/prefer-top-level-await': 'off',
     'unicorn/no-useless-undefined': 'off',
+    'unicorn/prefer-module': 'off',
+    'unicorn/import-style': 'off',
   },
 };
