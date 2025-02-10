@@ -29,6 +29,8 @@ import {
           EMAIL: {
             password: secrets.email.password,
             username: secrets.email.username,
+            host: secrets.email.host,
+            port: secrets.email.port,
           },
         };
 

@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 
-export type ConfigurationType = {
+export interface ConfigurationType {
   DATABASE_URL: string;
   BCRYPT_SALT: number;
   JWT_SECRET: string;
@@ -8,8 +8,10 @@ export type ConfigurationType = {
   EMAIL: {
     username: string;
     password: string;
+    host: string;
+    port: number;
   };
-};
+}
 
 export const validationSchema = Joi.object<ConfigurationType>({
   DATABASE_URL: Joi.string().required(),
@@ -19,5 +21,7 @@ export const validationSchema = Joi.object<ConfigurationType>({
   EMAIL: Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required(),
+    host: Joi.string().required(),
+    port: Joi.number().required(),
   }),
 });

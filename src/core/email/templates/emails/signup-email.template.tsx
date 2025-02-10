@@ -12,14 +12,11 @@ import { fontFamily } from '@core/email/templates/styles/base-style.constant';
 import { Logo } from '@core/email/templates/ui/logo';
 import { Button } from '@core/email/templates/ui/button';
 import { CardContainer } from '@core/email/templates/ui/card-container';
-
-interface LinearLoginCodeEmailProps {
-  verificationUrl: string;
-}
+import { EmailOptions } from '@core/email/types/email-type.enum';
 
 export const LinearLoginCodeEmail = ({
   verificationUrl,
-}: LinearLoginCodeEmailProps) => (
+}: EmailOptions<'ACCOUNT_CONFIRMATION_EMAIL'>) => (
   <Html>
     <Head />
     <Preview>Your account confirmation link from Shortly</Preview>
@@ -44,7 +41,7 @@ export const LinearLoginCodeEmail = ({
 
 LinearLoginCodeEmail.PreviewProps = {
   verificationUrl: 'https://google.mg',
-} as LinearLoginCodeEmailProps;
+} as EmailOptions<'ACCOUNT_CONFIRMATION_EMAIL'>;
 
 export default LinearLoginCodeEmail;
 

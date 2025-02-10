@@ -9,12 +9,14 @@ import { RequestContextModule } from '@core/request-context/request-context.modu
 import { ConfigurationModule } from '@core/configuration/configuration.module';
 import { features } from '@feature/features.constant';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { SendEmailModule } from '@core/email/send-email.module';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', 'static'),
     }),
+    SendEmailModule,
     ConfigurationModule,
     LoggingModule,
     CacheModule,

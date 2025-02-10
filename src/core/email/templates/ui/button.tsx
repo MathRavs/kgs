@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Button as ReactEmailButton } from '@react-email/components';
 import {
   borderRadius,

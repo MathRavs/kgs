@@ -4,7 +4,7 @@ export const EmailType = {
 
 export interface EmailOptionsByType {
   ACCOUNT_CONFIRMATION_EMAIL: {
-    verificationLink: string;
+    verificationUrl: string;
   };
 }
 
