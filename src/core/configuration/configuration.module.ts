@@ -7,6 +7,7 @@ import {
   ConfigurationType,
   validationSchema,
 } from '@core/configuration/types/configuration.type';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({
@@ -49,6 +50,7 @@ import {
     },
   ],
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [() => ({})],

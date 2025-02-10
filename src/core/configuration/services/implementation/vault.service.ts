@@ -2,6 +2,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as Vault from 'node-vault';
 import { VaultSecrets } from '@core/configuration/types/vault.type';
 import { AbstractVaultService } from '@core/configuration/services/abstract/abstract-vault.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class VaultService extends AbstractVaultService {
@@ -9,6 +11,9 @@ export class VaultService extends AbstractVaultService {
 
   @Inject()
   private readonly logger: Logger;
+
+  @Inject()
+  private readonly httpService: HttpService;
 
   constructor() {
     super();
@@ -27,12 +32,15 @@ export class VaultService extends AbstractVaultService {
 
   private async authenticateWithAppRole(): Promise<void> {
     try {
+      const secretID = await this.generateSecretId();
+
       this.logger.debug('Authenticating vault', this.constructor.name);
 
       const result = await this.vaultClient.approleLogin({
         role_id: process.env.VAULT_ROLE_ID,
-        secret_id: process.env.VAULT_SECRET_ID,
+        secret_id: secretID,
       });
+
       this.logger.debug('Authenticating done', this.constructor.name);
       this.vaultClient.token = result.auth.client_token;
       this.logger.debug('Authenticating done', this.constructor.name);
@@ -40,6 +48,28 @@ export class VaultService extends AbstractVaultService {
       this.logger.error('Authentication error', error, this.constructor.name);
       throw error;
     }
+  }
+
+  private async generateSecretId() {
+    const bootstrapToken = process.env.VAULT_BOOTSTRAP_TOKEN;
+
+    this.logger.debug('creating secret id', this.constructor.name);
+
+    const response = await firstValueFrom<{
+      data: { data: { secret_id: string } };
+    }>(
+      this.httpService.post(
+        `${process.env.VAULT_ADDR}/v1/auth/approle/role/my-role/secret-id`,
+        {},
+        {
+          headers: { 'X-Vault-Token': bootstrapToken },
+        },
+      ),
+    );
+
+    this.logger.debug('secret id created', this.constructor.name);
+
+    return response.data.data.secret_id;
   }
 
   async getSecrets(path: string): Promise<VaultSecrets> {
